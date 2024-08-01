@@ -10,10 +10,3 @@ With performance in mind, you must limit the number of calls to mmap(), but also
 • The size of these zones must be a multiple of getpagesize().
 
 You are allowed a global variable to manage your allocations and one for the threadsafe.
-
-gcc -o a.out main.c -L. -lft_malloc_arm64_Darwin -lpthread
-valgrind --leak-check=full ./a.out
-
-
-
-insert vector에 문제 있으.ㅁ.. ㄹㄴㄹ샹..1!
