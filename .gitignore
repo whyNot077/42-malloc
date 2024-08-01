@@ -1,0 +1,9 @@
+*.o
+*.d
+*.a
+libft_malloc.so
+libft_malloc_arm64_Darwin.so
+libft_malloc_arm64_Darwin_debug.so
+tmp
+trace
+malloc.h.gch
