@@ -43,12 +43,9 @@ Base new_heap(size_t words)
 
 static size_t get_page_size(size_t size)
 {
-    size_t new_size = 0;
-    size_t pagesize = getpagesize() * 4;
-    size = get_aligned_size(size);
-    while (new_size < size)
-    {
-        new_size += pagesize;
-    }
+    size_t pagesize = getpagesize();
+    size_t pages = (size + pagesize - 1) / pagesize;
+    size_t page_num = ((pages + 1) / 2) * 2;
+    size_t new_size = page_num * pagesize;
     return new_size;
 }

@@ -45,7 +45,7 @@ typedef enum
 } t_event;
 
 /* malloc.c*/
-void *malloc(size_t size);
+void *malloc(size_t size) __attribute__((malloc));
 Pointer Mmap(size_t size);
 void Munmap(Pointer head);
 int raise_error(char *message);
