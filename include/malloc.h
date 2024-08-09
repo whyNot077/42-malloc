@@ -128,8 +128,6 @@ void add_log_linked_blocks(Pointer root);
 
 #define NEXT_BLK(bp) ((Pointer)(bp) + GET_SIZE(HEAD(bp)))
 #define PREV_BLK(bp) ((Pointer)(bp) - GET_SIZE(PREV_FOOT(bp)))
-#define NEXT_LBLK(bp) ((Pointer)(bp) + DSIZE)
-#define PREV_LBLK(bp) ((Pointer)(bp) - DSIZE)
 
 #define PREV_PTR(bp) ((Pointer *)(bp))
 #define NEXT_PTR(bp) ((Pointer *)((Pointer)(bp) + WSIZE))
