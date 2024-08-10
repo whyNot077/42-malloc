@@ -27,7 +27,7 @@ static void initialize_pool_info()
     int page_size = getpagesize();
 
     size_t tiny_pool_size = 4 * page_size;
-    size_t small_pool_size = 32 * page_size;
+    size_t small_pool_size = 128 * page_size;
 
     g_small_threshold = (tiny_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
     g_large_threshold = (small_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;

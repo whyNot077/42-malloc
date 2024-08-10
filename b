@@ -1,2 +1,0 @@
-0000000100000000 T __mh_execute_header
-0000000100003f68 T _main

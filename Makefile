@@ -6,7 +6,7 @@
 #    By: minkim3 <minkim3@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/29 13:20:47 by minkim3           #+#    #+#              #
-#    Updated: 2023/06/19 18:01:31 by minkim3          ###   ########.fr        #
+#    Updated: 2024/08/10 16:01:52 by minkim3          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,6 @@ HEADER_PATH     = include/
 S_HEADER        = malloc.h
 HEADER          = $(addprefix $(HEADER_PATH), $(S_HEADER))
 
-# 컬러 코드
 RED = \033[1;31m
 PINK = \033[1;35m
 GREEN = \033[1;32m

@@ -17,7 +17,7 @@ int main(void)
     printf("Debug mode is enabled.\n");
 #endif
 
-    int size = 800;
+    int size = 100;
     void* tiny[size];
     void* small[size];
     void* large[size];

@@ -45,7 +45,7 @@ static size_t get_page_size(size_t size)
 {
     size_t pagesize = getpagesize();
     size_t pages = (size + pagesize - 1) / pagesize;
-    size_t page_num = ((pages + 1) / 2) * 2;
+    size_t page_num = ((pages + 3) / 4) * 4;
     size_t new_size = page_num * pagesize;
     return new_size;
 }

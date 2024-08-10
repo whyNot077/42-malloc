@@ -20,7 +20,7 @@ int main(void)
     size_t max_alloc = INT_MAX - DSIZE - PROLOGUE_SIZE - EPILOGUE_SIZE;
     ptr1 = test_realloc(ptr1, 500, 1);
     ptr1 = test_realloc(ptr1, 0, 1);
-    ptr1 = test_realloc(ptr1, 1000, 1);
+    ptr1 = test_realloc(ptr1, 3725, 1);
     ptr1 = test_realloc(ptr1, 100000, 1);
     ptr1 = test_realloc(ptr1, max_alloc, 1);
     ptr1 = test_realloc(ptr1, 100000, 1);

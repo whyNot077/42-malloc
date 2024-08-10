@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "eval"
+git commit -m "done"
 git push

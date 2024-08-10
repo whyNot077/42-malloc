@@ -3,10 +3,10 @@
 set -e
 mkdir -p trace
 make re \
-&& gcc -o tmp/test0 test/test.c -L. -lft_malloc_x86_64_Darwin -lpthread \
-&& gcc -o tmp/test1 test/test1.c -L. -lft_malloc_x86_64_Darwin -lpthread \
-&& gcc -o tmp/test2 test/test2.c -L. -lft_malloc_x86_64_Darwin -lpthread \
-&& gcc -o tmp/test3 test/test3.c -L. -lft_malloc_x86_64_Darwin -lpthread \
+&& gcc -o tmp/test0 test/test.c -L. -lft_malloc -lpthread \
+&& gcc -o tmp/test1 test/test1.c -L. -lft_malloc -lpthread \
+&& gcc -o tmp/test2 test/test2.c -L. -lft_malloc -lpthread \
+&& gcc -o tmp/test3 test/test3.c -L. -lft_malloc -lpthread \
 && echo "Release build successful." \
 && ./tmp/test0 > trace/test_release_0.log \
 && ./tmp/test1 > trace/test_release_1.log \
