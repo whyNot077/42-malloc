@@ -17,14 +17,13 @@ endif
 TITLE 			= Libft Malloc
 NAME			= libft_malloc_$(HOSTTYPE).so
 NAME_DEBUG		= libft_malloc_$(HOSTTYPE)_debug.so
-NAME_BONUS      = libft_malloc_$(HOSTTYPE)_bonus.so
 LIBNAME			= libft_malloc.so
 
 CC              = cc
 CFLAGS          = -Iinclude -MMD -Wall -Wextra -Werror
 COMPILE_FLAGS   = -g -fsanitize=address
 DEBUG_FLAGS     = -g -DDEBUG
-BONUS_FLAGS     = -DBONUS
+BONUS_FLAGS     = 
 RM              = rm -f
 
 DEBUG_SPECIFIC_FLAGS =
@@ -46,7 +45,6 @@ SOURCES			= $(addprefix $(SRCS_PATH), $(SRC))
 TMP_DIR         = tmp/
 OBJECTS         = $(addprefix $(TMP_DIR), $(SRC:.c=.o))
 DEBUG_OBJECTS   = $(addprefix $(TMP_DIR), $(SRC:.c=_debug.o))
-BONUS_OBJECTS   = $(addprefix $(TMP_DIR), $(SRC:.c=_bonus.o))
 
 HEADER_PATH     = include/
 S_HEADER        = malloc.h
@@ -59,11 +57,11 @@ YELLOW = \033[1;33m
 BLUE = \033[1;34m
 DEFAULT = \033[0m
 
-all: $(NAME) $(LIBNAME)
+all: $(NAME)
 
 $(NAME): $(OBJECTS)
 	make -C $(P_LIBFT)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(OBJECTS) $(LIBFT) -shared -o $@
+	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) $(OBJECTS) $(LIBFT) -shared -o $@
 	@printf "\n$(GREEN)$(NAME) Created!$(DEFAULT)\n"
 
 $(NAME_DEBUG): $(DEBUG_OBJECTS)
@@ -71,18 +69,9 @@ $(NAME_DEBUG): $(DEBUG_OBJECTS)
 	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(DEBUG_FLAGS) $(DEBUG_SPECIFIC_FLAGS) $(DEBUG_OBJECTS) $(LIBFT) -shared -o $@
 	@printf "\n$(GREEN)$(NAME_DEBUG) Created!$(DEFAULT)\n"
 
-$(NAME_BONUS): $(BONUS_OBJECTS)
-	make -C $(P_LIBFT)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) $(BONUS_OBJECTS) $(LIBFT) -shared -o $@
-	@printf "\n$(GREEN)$(NAME_BONUS) Created!$(DEFAULT)\n"
-
-$(LIBNAME): $(NAME)
-	ln -sf $(NAME) $(LIBNAME)
-	@printf "\n$(GREEN)$(LIBNAME) -> $(NAME) Created!$(DEFAULT)\n"
-
 $(TMP_DIR)%.o: $(SRCS_PATH)%.c $(HEADER)
 	@mkdir -p $(TMP_DIR)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
 	@printf "$(BLUE)[$(TITLE)] Compiling $<$(DEFAULT)\033[K\r"
 
 $(TMP_DIR)%_debug.o: $(SRCS_PATH)%.c $(HEADER)
@@ -90,21 +79,15 @@ $(TMP_DIR)%_debug.o: $(SRCS_PATH)%.c $(HEADER)
 	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(DEBUG_FLAGS) $(DEBUG_SPECIFIC_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
 	@printf "$(BLUE)[$(TITLE)] Compiling $< in debug mode $(DEBUG_SPECIFIC_FLAGS) $(DEFAULT)\033[K\r"
 
-$(TMP_DIR)%_bonus.o: $(SRCS_PATH)%.c $(HEADER)
-	@mkdir -p $(TMP_DIR)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
-	@printf "$(BLUE)[$(TITLE)] Compiling $< in bonus mode $(DEFAULT)\033[K\r"
-
 clean:
-	$(RM) $(OBJECTS) $(DEBUG_OBJECTS) $(BONUS_OBJECTS)
+	$(RM) $(OBJECTS) $(DEBUG_OBJECTS)
 	$(RM) $(OBJECTS:.o=.d)
 	$(RM) $(DEBUG_OBJECTS:.o=.d)
-	$(RM) $(BONUS_OBJECTS:.o=.d)
 	make clean -C $(P_LIBFT)
 	@printf "$(BLUE)[$(TITLE)] Clean [OK]$(DEFAULT)\n"
 
 fclean: clean
-	$(RM) $(NAME) $(NAME_DEBUG) $(NAME_BONUS) $(LIBNAME)
+	$(RM) $(NAME) $(NAME_DEBUG) $(LIBNAME)
 	make fclean -C $(P_LIBFT)
 	@printf "$(BLUE)[$(TITLE)] Fclean [OK]$(DEFAULT)\n"
 
@@ -116,7 +99,8 @@ debug: DEBUG_SPECIFIC_FLAGS += $(DEBUG_FLAGS)
 debug: $(NAME_DEBUG)
 	@printf "\n$(YELLOW)Debug mode $(DEBUG_SPECIFIC_FLAGS) $(DEFAULT)\n"
 
-bonus: $(NAME_BONUS)
+bonus: BONUS_FLAGS += -DBONUS
+bonus: $(NAME)
 	@printf "\n$(YELLOW)Bonus mode $(DEFAULT)\n"
 
 .PHONY: all clean fclean re debug bonus
@@ -124,4 +108,3 @@ bonus: $(NAME_BONUS)
 
 -include $(OBJECTS:.o:.d)
 -include $(DEBUG_OBJECTS:.o:.d)
--include $(BONUS_OBJECTS:.o:.d)

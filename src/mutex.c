@@ -7,14 +7,16 @@ pthread_mutex_t g_memory_lock = PTHREAD_MUTEX_INITIALIZER;
 void lock()
 {
 #ifdef BONUS
-    pthread_mutex_lock(&g_memory_lock);
+    int rc = pthread_mutex_lock(&g_memory_lock);
+    assert(rc == 0);
 #endif
 }
 
 void unlock()
 {
 #ifdef BONUS
-    pthread_mutex_unlock(&g_memory_lock);
+    int rc = pthread_mutex_unlock(&g_memory_lock);
+    assert(rc == 0);
 #endif
 }
 

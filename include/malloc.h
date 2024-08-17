@@ -13,6 +13,8 @@
 #include <fcntl.h>
 #include "../libft/libft.h"
 #include <pthread.h>
+#include <assert.h>
+
 typedef uintptr_t Base;
 typedef uintptr_t Pointer;
 
