@@ -87,16 +87,11 @@ void show_alloc_mem(void);
 void show_alloc_mem_ex(void);
 void show_free_mem(void);
 void print_base(Pointer ptr, int base, int prefix);
-#ifdef DEBUG
-void print_nearby_blocks(Base bp);
-void show_linked_blocks(Pointer root);
-#endif
 
 /* mutex.c */
 void lock();
 void unlock();
 void destroy_lock();
-void destroy_file_lock();
 
 /* log.c */
 void open_log_file();
@@ -144,7 +139,6 @@ void add_log_linked_blocks(Pointer root);
 #define PREV(ptr) ((Pointer *)((Pointer)(ptr) - WSIZE))
 
 extern pthread_mutex_t g_memory_lock;
-extern pthread_mutex_t g_log_lock;
 extern Base g_segregated_list; // free block list
 extern Pointer g_extend_vector;
 extern size_t g_small_threshold;

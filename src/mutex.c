@@ -26,10 +26,3 @@ void destroy_lock()
     pthread_mutex_destroy(&g_memory_lock);
 #endif
 }
-
-void destroy_file_lock()
-{
-#ifdef BONUS
-    pthread_mutex_destroy(&g_log_lock);
-#endif   
-}

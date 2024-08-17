@@ -49,6 +49,7 @@ void Munmap(Pointer head)
 void *realloc(void *ptr, size_t size)
 {
     lock();
+    open_log_file();
     add_log_detail("realloc");
     if (ptr == NULL)
     {

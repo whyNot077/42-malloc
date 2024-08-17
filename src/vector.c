@@ -6,9 +6,6 @@ static Pointer create_vector(size_t size);
 static int resize_vector();
 static int vector_is_full();
 const int CAPACITY = 100;
-#ifdef DEBUG
-static void print_vector();
-#endif
 
 int init_vector()
 {

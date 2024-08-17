@@ -17,7 +17,6 @@ void free(void *bp)
         free_segregated_list();
         close_log_file();
         destroy_lock();
-        destroy_file_lock();
     }
     unlock();
     close_log_file();
