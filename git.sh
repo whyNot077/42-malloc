@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "only two global variables"
+git commit -m "rename variable : g_segregated_list -> g_list"
 git push

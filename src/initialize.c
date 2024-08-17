@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-Base g_segregated_list = 0;
+Base g_list = 0;
 
 static void get_threshold(int *small_threshold, int *large_threshold);
 static int initialize_start_point(void);
@@ -8,7 +8,7 @@ static int initialize_start_point(void);
 int init_malloc()
 {
     add_log_detail("init_malloc");
-    if (g_segregated_list)
+    if (g_list)
     {
         return OK;
     }
@@ -43,12 +43,12 @@ static int initialize_start_point(void)
     int small_threshold, large_threshold;
     get_threshold(&small_threshold, &large_threshold);
 
-    g_segregated_list = Mmap(4 * BLOCK_SIZE);
-    if (!g_segregated_list)
+    g_list = Mmap(4 * BLOCK_SIZE);
+    if (!g_list)
     {
         return ERROR;
     }
-    Base tiny_root = g_segregated_list + WSIZE;
+    Base tiny_root = g_list + WSIZE;
     Base small_root = tiny_root + BLOCK_SIZE;
     Base large_root = small_root + BLOCK_SIZE;
 
@@ -56,10 +56,10 @@ static int initialize_start_point(void)
     initialize(small_root, true);
     initialize(large_root, true);
 
-    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE), small_threshold);
-    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + WSIZE), large_threshold);
-    PUT_PTR((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + 2 * WSIZE), 0);
-    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE), EMPTY);
+    PUT((Pointer)(g_list + 3 * BLOCK_SIZE), small_threshold);
+    PUT((Pointer)(g_list + 3 * BLOCK_SIZE + WSIZE), large_threshold);
+    PUT_PTR((Pointer)(g_list + 3 * BLOCK_SIZE + 2 * WSIZE), 0);
+    PUT((Pointer)(g_list + 3 * BLOCK_SIZE + 3 * WSIZE), EMPTY);
     return OK;
 }
 

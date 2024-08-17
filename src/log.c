@@ -14,7 +14,7 @@ static void ft_itoa_fd(size_t nb, char base, int fd);
 
 void open_log_file()
 {
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return;
     }
@@ -30,28 +30,28 @@ void open_log_file()
         log_fd = EMPTY;
         return;
     }
-    PUT(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE, log_fd);
+    PUT(g_list + 3 * BLOCK_SIZE + 3 * WSIZE, log_fd);
 #endif
 }
 
 void close_log_file()
 {
 #ifdef BONUS
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return;
     }
     int log_fd = GET_LOG_FD();
     if (log_fd)
         close(log_fd);
-    PUT(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE, EMPTY);
+    PUT(g_list + 3 * BLOCK_SIZE + 3 * WSIZE, EMPTY);
 #endif
 }
 
 void add_log_detail(const char *msg)
 {
 #ifdef BONUS
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return;
     }
@@ -190,7 +190,7 @@ static void print_nearby_blocks(Base bp)
 
 static void print_vector()
 {
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return;
     }

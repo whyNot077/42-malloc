@@ -137,7 +137,7 @@ static size_t print_blocks(Base prologue_bp, t_pool called_type,
 
 static size_t print_memory(t_pool called_type, int extension, int print_alloc)
 {
-    if (!g_segregated_list)
+    if (!g_list)
     {
         print_type_info(0, called_type);
         return 0;

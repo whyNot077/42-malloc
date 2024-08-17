@@ -117,11 +117,11 @@ void add_log_linked_blocks(Pointer root);
 #define GET_PTR(p) ((Pointer)(GET(p)))
 #define PUT_PTR(p, val) (PUT(p, (Pointer)(val)))
 
-#define GET_TINY_THRESHOLD() GET(((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE))
-#define GET_SMALL_THRESHOLD() GET(((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + WSIZE))
-#define GET_VECTOR_START_POINT() GET_PTR((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE)
+#define GET_TINY_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE))
+#define GET_SMALL_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE + WSIZE))
+#define GET_VECTOR_START_POINT() GET_PTR((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE)
 #define SET_VECTOR_START_POINT(p, val) PUT_PTR(p, val)
-#define GET_LOG_FD() GET((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 3 * WSIZE)
+#define GET_LOG_FD() GET((Pointer)(g_list) + 3 * BLOCK_SIZE + 3 * WSIZE)
 
 #define GET_SIZE(p) (GET(p) & ~0x7)
 #define IS_ALLOC(p) (GET(p) & 0x1)
@@ -143,7 +143,7 @@ void add_log_linked_blocks(Pointer root);
 #define PREV(ptr) ((Pointer *)((Pointer)(ptr) - WSIZE))
 
 extern pthread_mutex_t g_memory_lock;
-extern Base g_segregated_list;
+extern Base g_list;
 // segregated list + tiny threshold + small threshold + vector start point + log_fd
 
 #endif // MALLOC_H

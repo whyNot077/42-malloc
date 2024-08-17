@@ -64,8 +64,8 @@ static void free_bp(Pointer bp)
 static void free_segregated_list()
 {
     add_log_detail("free_segregated_list");
-    Munmap(g_segregated_list, 4 * BLOCK_SIZE);
-    g_segregated_list = 0;
+    Munmap(g_list, 4 * BLOCK_SIZE);
+    g_list = 0;
 }
 
 static int free_vector()
@@ -75,7 +75,7 @@ static int free_vector()
     if (vector)
     {
         Munmap(vector, VECTOR_SIZE(vector) * WSIZE);
-        SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, 0);
+        SET_VECTOR_START_POINT((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE, 0);
     }
 
     return OK;

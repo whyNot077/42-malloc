@@ -23,11 +23,11 @@ void insert_to_root(Pointer bp, t_pool type)
 
 Base get_free_root_by_type(t_pool type)
 {
-    if (g_segregated_list == 0)
+    if (g_list == 0)
     {
         return 0;
     }
-    return g_segregated_list + ((type - 1) * BLOCK_SIZE) + WSIZE;
+    return g_list + ((type - 1) * BLOCK_SIZE) + WSIZE;
 }
 
 static void unlink_block(Base prevp, Base nextp)

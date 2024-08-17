@@ -9,7 +9,7 @@ const int CAPACITY = 100;
 
 int init_vector()
 {
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return ERROR;
     }
@@ -23,7 +23,7 @@ int init_vector()
     {
         return ERROR;
     }
-    SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
+    SET_VECTOR_START_POINT((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
     return OK;
 }
 
@@ -56,7 +56,7 @@ static int resize_vector()
     }
     ft_memcpy((void *)new_vector, (void *)vector, current_size * WSIZE);
     Munmap(vector, current_size * WSIZE);
-    SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
+    SET_VECTOR_START_POINT((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
     VECTOR_CAPACITY(new_vector) = new_size;
     return OK;
 }
@@ -96,7 +96,8 @@ int insert_to_vector(Pointer bp)
                &VECTOR_ELEMENT(vector, index),
                (count - index) * WSIZE);
     VECTOR_ELEMENT(vector, index) = bp;
-    VECTOR_SIZE(vector)++;
+    VECTOR_SIZE(vector)
+    ++;
     return OK;
 }
 
@@ -114,7 +115,8 @@ int delete_from_vector(Pointer bp)
     ft_memmove(&VECTOR_ELEMENT(vector, index),
                NEXT(&VECTOR_ELEMENT(vector, index)),
                (count - index - 1) * WSIZE);
-    VECTOR_SIZE(vector)--;
+    VECTOR_SIZE(vector)
+    --;
 
     return OK;
 }
@@ -131,7 +133,7 @@ static Pointer *get_address(Pointer vector, size_t index)
 
 Pointer *find_start_point(Pointer bp)
 {
-    if (!g_segregated_list)
+    if (!g_list)
     {
         return NULL;
     }
