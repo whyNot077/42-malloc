@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "log"
+git commit -m "only two global variables"
 git push

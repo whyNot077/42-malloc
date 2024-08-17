@@ -31,9 +31,10 @@ int is_heap_empty(Base prologue_bp)
 
 static int not_exist_allocated_block()
 {
-    for (size_t i = 0; i < VECTOR_SIZE(g_extend_vector) - 2; i++)
+    Pointer vector = GET_VECTOR_START_POINT();
+    for (size_t i = 0; i < VECTOR_SIZE(vector) - 2; i++)
     {
-        Base prologue_bp = VECTOR_ELEMENT(g_extend_vector, i);
+        Base prologue_bp = VECTOR_ELEMENT(vector, i);
         if (is_heap_empty(prologue_bp))
         {
             remove_from_list(NEXT_BLK(prologue_bp));
@@ -42,7 +43,7 @@ static int not_exist_allocated_block()
             add_log(DELETE_HEAP, prologue_bp, 0);
         }
     }
-    return VECTOR_SIZE(g_extend_vector) - 2 == 0;
+    return VECTOR_SIZE(vector) - 2 == 0;
 }
 
 static void free_bp(Pointer bp)
@@ -69,7 +70,12 @@ static void free_segregated_list()
 static int free_vector()
 {
     add_log_detail("free_vector");
-    Munmap(g_extend_vector);
-    g_extend_vector = 0;
+    Pointer vector = GET_VECTOR_START_POINT();
+    if (vector)
+    {
+        munmap((void *)vector, VECTOR_SIZE(vector) * WSIZE);
+        SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, 0);
+    }
+
     return OK;
 }

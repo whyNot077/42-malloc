@@ -137,12 +137,18 @@ static size_t print_blocks(Base prologue_bp, t_pool called_type,
 
 static size_t print_memory(t_pool called_type, int extension, int print_alloc)
 {
-    if (g_extend_vector == 0)
+    if (!g_segregated_list)
     {
         print_type_info(0, called_type);
         return 0;
     }
-    int count = VECTOR_SIZE(g_extend_vector) - 2;
+    Pointer vector = GET_VECTOR_START_POINT();
+    if (vector == 0)
+    {
+        print_type_info(0, called_type);
+        return 0;
+    }
+    int count = VECTOR_SIZE(vector) - 2;
 #ifdef DEBUG_SHOW
     printf("\n!!! print_memory, count = %d\n", count);
 #endif
@@ -153,7 +159,7 @@ static size_t print_memory(t_pool called_type, int extension, int print_alloc)
 #ifdef DEBUG_SHOW
         printf("\n\n!!! print_memory, i = %d\n", i);
 #endif
-        Base prologue_block = VECTOR_ELEMENT(g_extend_vector, i);
+        Base prologue_block = VECTOR_ELEMENT(vector, i);
         if (prologue_block == 0)
         {
             continue;

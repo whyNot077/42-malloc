@@ -1,23 +1,29 @@
 #include "malloc.h"
 
-Pointer g_extend_vector = 0;
-static Pointer *get_address(size_t index);
+static Pointer *get_address(Pointer vector, size_t index);
 static Pointer create_vector(size_t size);
 static int resize_vector();
-static int vector_is_full();
+static int vector_is_full(Pointer vector);
+static size_t get_vector_index(Pointer vector, Pointer bp);
 const int CAPACITY = 100;
 
 int init_vector()
 {
-    if (g_extend_vector)
-    {
-        return OK;
-    }
-    g_extend_vector = create_vector(CAPACITY);
-    if (!g_extend_vector)
+    if (!g_segregated_list)
     {
         return ERROR;
     }
+    Pointer vector = GET_VECTOR_START_POINT();
+    if (vector)
+    {
+        return OK;
+    }
+    Pointer new_vector = create_vector(CAPACITY);
+    if (!new_vector)
+    {
+        return ERROR;
+    }
+    SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
     return OK;
 }
 
@@ -36,36 +42,39 @@ static Pointer create_vector(size_t size)
 
 static int resize_vector()
 {
-    size_t current_size = VECTOR_CAPACITY(g_extend_vector);
+    Pointer vector = GET_VECTOR_START_POINT();
+    if (!vector)
+    {
+        return ERROR;
+    }
+    size_t current_size = VECTOR_CAPACITY(vector);
     size_t new_size = get_aligned_size(current_size * 2 * WSIZE);
-
     Pointer new_vector = Mmap(new_size);
     if (!new_vector)
     {
         return ERROR;
     }
-    ft_memcpy((void *)new_vector, (void *)g_extend_vector, current_size * WSIZE);
-    free((void *)g_extend_vector);
-
-    g_extend_vector = new_vector;
-    VECTOR_CAPACITY(g_extend_vector) = new_size;
+    ft_memcpy((void *)new_vector, (void *)vector, current_size * WSIZE);
+    munmap((void *)vector, current_size * WSIZE);
+    SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
+    VECTOR_CAPACITY(new_vector) = new_size;
     return OK;
 }
 
-static int vector_is_full()
+static int vector_is_full(Pointer vector)
 {
-    return VECTOR_SIZE(g_extend_vector) >= VECTOR_CAPACITY(g_extend_vector);
+    return VECTOR_SIZE(vector) >= VECTOR_CAPACITY(vector);
 }
 
-size_t get_vector_index(Pointer bp)
+static size_t get_vector_index(Pointer vector, Pointer bp)
 {
-    size_t count = VECTOR_SIZE(g_extend_vector);
+    size_t count = VECTOR_SIZE(vector);
     size_t i = 0;
     if (count == 2)
     {
         return 0;
     }
-    while (i < count && VECTOR_ELEMENT(g_extend_vector, i) && VECTOR_ELEMENT(g_extend_vector, i) < bp)
+    while (i < count && VECTOR_ELEMENT(vector, i) && VECTOR_ELEMENT(vector, i) < bp)
     {
         i++;
     }
@@ -75,49 +84,58 @@ size_t get_vector_index(Pointer bp)
 int insert_to_vector(Pointer bp)
 {
     add_log_detail("insert_to_vector");
-    if (vector_is_full() && (resize_vector() == ERROR))
+    Pointer vector = GET_VECTOR_START_POINT();
+    if (vector_is_full(vector) && (resize_vector() == ERROR))
     {
         return ERROR;
     }
-    size_t count = VECTOR_SIZE(g_extend_vector);
-    size_t index = get_vector_index(bp);
-    ft_memmove(NEXT(&VECTOR_ELEMENT(g_extend_vector, index)),
-               &VECTOR_ELEMENT(g_extend_vector, index),
+
+    size_t count = VECTOR_SIZE(vector);
+    size_t index = get_vector_index(vector, bp);
+    ft_memmove(NEXT(&VECTOR_ELEMENT(vector, index)),
+               &VECTOR_ELEMENT(vector, index),
                (count - index) * WSIZE);
-    VECTOR_ELEMENT(g_extend_vector, index) = bp;
-    VECTOR_SIZE(g_extend_vector)++;
+    VECTOR_ELEMENT(vector, index) = bp;
+    VECTOR_SIZE(vector)++;
     return OK;
 }
 
 int delete_from_vector(Pointer bp)
 {
-    size_t count = VECTOR_SIZE(g_extend_vector);
-    size_t index = get_vector_index(bp);
+    Pointer vector = GET_VECTOR_START_POINT();
+    size_t count = VECTOR_SIZE(vector);
+    size_t index = get_vector_index(vector, bp);
 
     add_log_detail("delete_from_vector");
-    if (index >= count || VECTOR_ELEMENT(g_extend_vector, index) != bp)
+    if (index >= count || VECTOR_ELEMENT(vector, index) != bp)
     {
         return ERROR;
     }
-    ft_memmove(&VECTOR_ELEMENT(g_extend_vector, index),
-               NEXT(&VECTOR_ELEMENT(g_extend_vector, index)),
+    ft_memmove(&VECTOR_ELEMENT(vector, index),
+               NEXT(&VECTOR_ELEMENT(vector, index)),
                (count - index - 1) * WSIZE);
-    VECTOR_SIZE(g_extend_vector)--;
+    VECTOR_SIZE(vector)--;
+
     return OK;
 }
 
-static Pointer *get_address(size_t index)
+static Pointer *get_address(Pointer vector, size_t index)
 {
-    size_t count = VECTOR_SIZE(g_extend_vector);
+    size_t count = VECTOR_SIZE(vector);
     if (index >= count)
     {
         return NULL;
     }
-    return &VECTOR_ELEMENT(g_extend_vector, index);
+    return &VECTOR_ELEMENT(vector, index);
 }
 
 Pointer *find_start_point(Pointer bp)
 {
-    size_t index = get_vector_index(bp);
-    return get_address(index);
+    if (!g_segregated_list)
+    {
+        return NULL;
+    }
+    Pointer vector = GET_VECTOR_START_POINT();
+    size_t index = get_vector_index(vector, bp);
+    return get_address(vector, index);
 }

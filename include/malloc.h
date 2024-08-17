@@ -69,7 +69,6 @@ int is_heap_empty(Base prologue_bp);
 Pointer *find_start_point(Pointer bp);
 int init_vector();
 int insert_to_vector(Pointer bp);
-size_t get_vector_index(Pointer bp);
 int delete_from_vector(Pointer bp);
 
 /* segregated_list.c*/
@@ -115,6 +114,14 @@ void add_log_linked_blocks(Pointer root);
 
 #define GET(p) (*(Pointer *)(p))
 #define PUT(p, val) (*(Pointer *)(p) = (val))
+#define GET_PTR(p) ((Pointer)(GET(p)))
+#define PUT_PTR(p, val) (PUT(p, (Pointer)(val)))
+
+#define GET_TINY_THRESHOLD() GET(((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE))
+#define GET_SMALL_THRESHOLD() GET(((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + WSIZE))
+#define GET_VECTOR_START_POINT() GET_PTR((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE)
+#define SET_VECTOR_START_POINT(p, val) PUT_PTR(p, val)
+#define GET_LOG_FD() GET((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 3 * WSIZE)
 
 #define GET_SIZE(p) (GET(p) & ~0x7)
 #define IS_ALLOC(p) (GET(p) & 0x1)
@@ -129,9 +136,6 @@ void add_log_linked_blocks(Pointer root);
 #define PREV_PTR(bp) ((Pointer *)(bp))
 #define NEXT_PTR(bp) ((Pointer *)((Pointer)(bp) + WSIZE))
 
-#define GET_PTR(p) ((Pointer)(GET(p)))
-#define PUT_PTR(p, val) (PUT(p, (Pointer)(val)))
-
 #define VECTOR_CAPACITY(ptr) (*((size_t *)(ptr)))
 #define VECTOR_SIZE(ptr) (*((size_t *)((Pointer)(ptr) + WSIZE)))
 #define VECTOR_ELEMENT(ptr, index) (*((Pointer *)((Pointer)(ptr) + ((index) + 2) * WSIZE)))
@@ -139,34 +143,7 @@ void add_log_linked_blocks(Pointer root);
 #define PREV(ptr) ((Pointer *)((Pointer)(ptr) - WSIZE))
 
 extern pthread_mutex_t g_memory_lock;
-extern Base g_segregated_list; // free block list
-extern Pointer g_extend_vector;
-extern size_t g_small_threshold;
-extern size_t g_large_threshold;
-extern int log_fd;
-
-/*
- * Simple allocator based on implicit free lists with boundary
- * tag coalescing. Each block has HEAD and FOOT of the form:
- *
- *      31                     3  2  1  0
- *      -----------------------------------
- *     | s  s  s  s  ... s  s  s  0  0  a/f
- *      -----------------------------------
- *
- * where s are the meaningful size bits and a/f is set
- * iff the block is allocated. The list has the following form:
- *
- * begin                                                          end
- * heap                                                           heap
- *  -----------------------------------------------------------------
- * |  pad   | hdr(8:a) | ftr(8:a) | zero or more usr blks | hdr(8:a) |
- *  -----------------------------------------------------------------
- *          |       prologue      |                       | epilogue |
- *          |         block       |                       | block    |
- *
- * The allocated prologue and epilogue blocks are overhead that
- * eliminate edge conditions during coalescing.
- */
+extern Base g_segregated_list;
+// segregated list + tiny threshold + small threshold + vector start point + log_fd
 
 #endif // MALLOC_H

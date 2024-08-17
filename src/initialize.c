@@ -1,10 +1,8 @@
 #include "malloc.h"
 
 Base g_segregated_list = 0;
-size_t g_small_threshold = 0;
-size_t g_large_threshold = 0;
 
-static void initialize_pool_info();
+static void get_threshold(int *small_threshold, int *large_threshold);
 static int initialize_start_point(void);
 
 int init_malloc()
@@ -14,7 +12,6 @@ int init_malloc()
     {
         return OK;
     }
-    initialize_pool_info();
     if (initialize_start_point() == ERROR)
     {
         return ERROR;
@@ -22,15 +19,15 @@ int init_malloc()
     return init_vector();
 }
 
-static void initialize_pool_info()
+static void get_threshold(int *small_threshold, int *large_threshold)
 {
     int page_size = getpagesize();
 
     size_t tiny_pool_size = 4 * page_size;
     size_t small_pool_size = 128 * page_size;
 
-    g_small_threshold = (tiny_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
-    g_large_threshold = (small_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
+    *small_threshold = (tiny_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
+    *large_threshold = (small_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
 }
 
 void initialize(Base bp, int is_alloc)
@@ -43,7 +40,10 @@ void initialize(Base bp, int is_alloc)
 
 static int initialize_start_point(void)
 {
-    g_segregated_list = Mmap(3 * BLOCK_SIZE);
+    int small_threshold, large_threshold;
+    get_threshold(&small_threshold, &large_threshold);
+
+    g_segregated_list = Mmap(3 * BLOCK_SIZE + DSIZE + DSIZE);
     if (!g_segregated_list)
     {
         return ERROR;
@@ -55,16 +55,21 @@ static int initialize_start_point(void)
     initialize(tiny_root, true);
     initialize(small_root, true);
     initialize(large_root, true);
+
+    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE), small_threshold);
+    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + WSIZE), large_threshold);
+    PUT_PTR((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + 2 * WSIZE), 0);
+    PUT((Pointer)(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE), EMPTY);
     return OK;
 }
 
 t_pool get_pool_type(size_t size)
 {
-    if (size <= g_small_threshold)
+    if (size <= GET_TINY_THRESHOLD())
     {
         return TINY;
     }
-    else if (size <= g_large_threshold)
+    else if (size <= GET_SMALL_THRESHOLD())
     {
         return SMALL;
     }

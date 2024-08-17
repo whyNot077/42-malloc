@@ -11,10 +11,14 @@ static void print_ptr_and_size(Pointer ptr, size_t size);
 static t_status getenv_cached(t_env env);
 static void ft_itoa_fd(size_t nb, char base, int fd);
 #endif
-int log_fd = EMPTY;
 
 void open_log_file()
 {
+    if (!g_segregated_list)
+    {
+        return;
+    }
+    int log_fd = GET_LOG_FD();
     if (log_fd != EMPTY)
     {
         return;
@@ -26,21 +30,32 @@ void open_log_file()
         log_fd = EMPTY;
         return;
     }
+    PUT(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE, log_fd);
 #endif
 }
 
 void close_log_file()
 {
 #ifdef BONUS
+    if (!g_segregated_list)
+    {
+        return;
+    }
+    int log_fd = GET_LOG_FD();
     if (log_fd)
         close(log_fd);
-    log_fd = EMPTY;
+    PUT(g_segregated_list + 3 * BLOCK_SIZE + 3 * WSIZE, EMPTY);
 #endif
 }
 
 void add_log_detail(const char *msg)
 {
 #ifdef BONUS
+    if (!g_segregated_list)
+    {
+        return;
+    }
+    int log_fd = GET_LOG_FD();
     if (log_fd == EMPTY)
     {
         return;
@@ -59,6 +74,7 @@ void add_log_detail(const char *msg)
 void add_log(t_event t_event, Pointer ptr, size_t size)
 {
 #ifdef BONUS
+    int log_fd = GET_LOG_FD();
     if (log_fd == EMPTY)
     {
         return;
@@ -84,6 +100,7 @@ void add_log(t_event t_event, Pointer ptr, size_t size)
 void add_log_linked_blocks(Pointer root)
 {
 #ifdef BONUS
+    int log_fd = GET_LOG_FD();
     if (getenv_cached(LOG_DETAIL))
     {
         return;
@@ -105,6 +122,7 @@ void add_log_linked_blocks(Pointer root)
 #ifdef BONUS
 static void print_event(t_event t_event, Pointer ptr, size_t size)
 {
+    int log_fd = GET_LOG_FD();
     ft_putstr_fd(log_fd, "\n\n\n---- ");
     if (t_event == FREE)
         ft_putstr_fd(log_fd, "Free");
@@ -119,6 +137,7 @@ static void print_event(t_event t_event, Pointer ptr, size_t size)
 
 static void print_ptr_and_size(Pointer ptr, size_t size)
 {
+    int log_fd = GET_LOG_FD();
     if (!ptr)
     {
         ptr = 0;
@@ -159,6 +178,7 @@ static void print_bp_and_size(Base bp)
 
 static void print_nearby_blocks(Base bp)
 {
+    int log_fd = GET_LOG_FD();
     Base prev_bp = PREV_BLK(bp);
     Base next_bp = NEXT_BLK(bp);
 
@@ -170,17 +190,23 @@ static void print_nearby_blocks(Base bp)
 
 static void print_vector()
 {
-    size_t count = VECTOR_SIZE(g_extend_vector) - 2;
+    if (!g_segregated_list)
+    {
+        return;
+    }
+    int log_fd = GET_LOG_FD();
+    Pointer vector = GET_VECTOR_START_POINT();
+    size_t count = VECTOR_SIZE(vector) - 2;
     ft_putstr_fd(log_fd, "\n\n--------Print vector : Vector contents ");
     ft_putstr_fd(log_fd, " (");
     ft_itoa_fd(count, 10, log_fd);
     ft_putstr_fd(log_fd, " elements)  : (ptr, size)--------\n");
-    ft_putstr_fd(log_fd, "g_extend_vector = ");
-    ft_itoa_fd((size_t)g_extend_vector, 16, log_fd);
+    ft_putstr_fd(log_fd, "vector = ");
+    ft_itoa_fd((size_t)vector, 16, log_fd);
 
     for (size_t i = 0; i < count; i++)
     {
-        void *ptr = (void *)VECTOR_ELEMENT(g_extend_vector, i);
+        void *ptr = (void *)VECTOR_ELEMENT(vector, i);
         ft_putstr_fd(log_fd, "(");
         ft_itoa_fd((size_t)ptr, 16, log_fd);
         if (ptr)
