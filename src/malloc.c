@@ -38,9 +38,9 @@ Pointer Mmap(size_t size)
     return (Pointer)new_memory;
 }
 
-void Munmap(Pointer head)
+void Munmap(Pointer ptr, size_t size)
 {
-    if (munmap((void *)head, GET_SIZE(head)) < 0)
+    if (munmap((void *)ptr, size) < 0)
     {
         raise_error("Munmap: Unable to unmap memory.");
     }

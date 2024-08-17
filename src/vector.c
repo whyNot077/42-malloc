@@ -55,7 +55,7 @@ static int resize_vector()
         return ERROR;
     }
     ft_memcpy((void *)new_vector, (void *)vector, current_size * WSIZE);
-    munmap((void *)vector, current_size * WSIZE);
+    Munmap((void *)vector, current_size * WSIZE);
     SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
     VECTOR_CAPACITY(new_vector) = new_size;
     return OK;

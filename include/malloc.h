@@ -49,7 +49,7 @@ typedef enum
 /* malloc.c*/
 void *malloc(size_t size) __attribute__((malloc));
 Pointer Mmap(size_t size);
-void Munmap(Pointer head);
+void Munmap(Pointer ptr, size_t size);
 int raise_error(char *message);
 
 void free(void *bp);

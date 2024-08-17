@@ -39,7 +39,8 @@ static int not_exist_allocated_block()
         {
             remove_from_list(NEXT_BLK(prologue_bp));
             delete_from_vector(prologue_bp);
-            Munmap(HEAD(prologue_bp));
+            size_t size = GET_SIZE(HEAD(NEXT_BLK(prologue_bp))) + PROLOGUE_SIZE + EPILOGUE_SIZE;
+            Munmap(HEAD(prologue_bp), size);
             add_log(DELETE_HEAP, prologue_bp, 0);
         }
     }
@@ -63,7 +64,7 @@ static void free_bp(Pointer bp)
 static void free_segregated_list()
 {
     add_log_detail("free_segregated_list");
-    Munmap(g_segregated_list);
+    Munmap(g_segregated_list, 4 * BLOCK_SIZE);
     g_segregated_list = 0;
 }
 
@@ -73,7 +74,7 @@ static int free_vector()
     Pointer vector = GET_VECTOR_START_POINT();
     if (vector)
     {
-        munmap((void *)vector, VECTOR_SIZE(vector) * WSIZE);
+        Munmap(vector, VECTOR_SIZE(vector) * WSIZE);
         SET_VECTOR_START_POINT((Pointer)(g_segregated_list) + 3 * BLOCK_SIZE + 2 * WSIZE, 0);
     }
 

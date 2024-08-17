@@ -43,7 +43,7 @@ static int initialize_start_point(void)
     int small_threshold, large_threshold;
     get_threshold(&small_threshold, &large_threshold);
 
-    g_segregated_list = Mmap(3 * BLOCK_SIZE + DSIZE + DSIZE);
+    g_segregated_list = Mmap(4 * BLOCK_SIZE);
     if (!g_segregated_list)
     {
         return ERROR;
