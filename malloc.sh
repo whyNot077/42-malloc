@@ -2,8 +2,8 @@
 
 set -e
 mkdir -p trace
-make fclean && make bonus
-# make re
+# make fclean && make bonus
+make re
 gcc -o tmp/test0 test/test.c -L. -lft_malloc_arm64_Darwin -lpthread \
 && gcc -o tmp/test1 test/test1.c -L. -lft_malloc_arm64_Darwin -lpthread \
 && gcc -o tmp/test2 test/test2.c -L. -lft_malloc_arm64_Darwin -lpthread \
