@@ -8,7 +8,7 @@ static size_t get_vector_index(Pointer vector, Pointer bp);
 
 int init_vector()
 {
-    const int capacity = 100;
+    const int capacity = 10;
     if (!g_list)
     {
         return ERROR;
