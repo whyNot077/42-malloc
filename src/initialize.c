@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-Base g_list = 0;
+Pointer g_list = 0;
 
 static void get_threshold(int *small_threshold, int *large_threshold);
 static int initialize_start_point(void);
