@@ -1,4 +1,4 @@
 #!/bin/bash
 git add .
-git commit -m "vector"
+git commit -m "shell script update"
 git push
