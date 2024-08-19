@@ -12,6 +12,13 @@ gcc -L. -lft_malloc eval/test2.c -o tmp/test2
 gcc -L. -lft_malloc eval/test3.c -o tmp/test3
 gcc -L. -lft_malloc eval/test4.c -o tmp/test4
 gcc -L. -lft_malloc eval/test5.c -o tmp/test5
+echo "build eval successful."
+
+# gcc -L. -lft_malloc test/test.c -o tmp/my_test0
+# gcc -L. -lft_malloc test/test1.c -o tmp/my_test1
+# gcc -L. -lft_malloc test/test2.c -o tmp/my_test2
+# gcc -L. -lft_malloc test/test3.c -o tmp/my_test3
+# echo "build test successful."
 
 # gcc -o tmp/test0_origin eval/test0.c
 # gcc -o tmp/test1_origin eval/test1.c
