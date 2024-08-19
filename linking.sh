@@ -1,5 +1,6 @@
 #!/bin/sh 
 export HOSTTYPE=Testing
+# make fclean && make debug
 make re
 ln -s libft_malloc_Testing.so libft_malloc.so
 ls -l libft_malloc.so

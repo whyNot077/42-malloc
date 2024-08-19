@@ -24,6 +24,9 @@ void *malloc(size_t size)
     return (void *)res;
 }
 
+#ifdef DEBUG
+static int mmap_count = 0;
+#endif
 Pointer Mmap(size_t size)
 {
     if (size >= get_system_limit())
@@ -31,6 +34,10 @@ Pointer Mmap(size_t size)
         return raise_error("Memory allocation error: Total pool size exceeds system limit.");
     }
     void *new_memory = (void *)mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    #ifdef DEBUG
+    printf("mmap count = %d\n", ++mmap_count);
+    printf("map pointer = %p, size = %zu\n", new_memory, size);
+    #endif
     if (new_memory == MAP_FAILED)
     {
         return raise_error("Mmap: Unable to map memory.");
@@ -38,8 +45,19 @@ Pointer Mmap(size_t size)
     return (Pointer)new_memory;
 }
 
+#ifdef DEBUG
+static int munmap_count = 0;
+#endif
 void Munmap(Pointer ptr, size_t size)
 {
+    #ifdef DEBUG
+    printf("ummap pointer = %p, size = %zu\n", (void *)ptr, size);
+    printf("munmap count = %d\n", ++munmap_count);
+    if (munmap_count == mmap_count)
+    {
+        printf("done~!!!!! free all\n");
+    }
+    #endif
     if (munmap((void *)ptr, size) < 0)
     {
         raise_error("Munmap: Unable to unmap memory.");

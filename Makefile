@@ -16,21 +16,17 @@ endif
 
 TITLE 			= Libft Malloc
 NAME			= libft_malloc_$(HOSTTYPE).so
-NAME_DEBUG		= libft_malloc_$(HOSTTYPE)_debug.so
 LIBNAME			= libft_malloc.so
 
 CC              = cc
 CFLAGS          = -Iinclude -MMD -Wall -Wextra -Werror
 COMPILE_FLAGS   = -g -fsanitize=address
-DEBUG_FLAGS     = -g -DDEBUG
-BONUS_FLAGS     = 
+DEBUG_FLAGS     = -DDEBUG
+BONUS_FLAGS     = -DBONUS
 RM              = rm -f
 
 DEBUG_SPECIFIC_FLAGS =
-
-ifeq ($(DEBUG_SHOW),1)
-DEBUG_SPECIFIC_FLAGS += -DDEBUG_SHOW
-endif
+BONUS_SPECIFIC_FLAGS = 
 
 P_LIBFT			= libft/
 A_LIBFT         = libft.a
@@ -44,7 +40,6 @@ SOURCES			= $(addprefix $(SRCS_PATH), $(SRC))
 
 TMP_DIR         = tmp/
 OBJECTS         = $(addprefix $(TMP_DIR), $(SRC:.c=.o))
-DEBUG_OBJECTS   = $(addprefix $(TMP_DIR), $(SRC:.c=_debug.o))
 
 HEADER_PATH     = include/
 S_HEADER        = malloc.h
@@ -61,33 +56,22 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS)
 	make -C $(P_LIBFT)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) $(OBJECTS) $(LIBFT) -shared -o $@
+	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_SPECIFIC_FLAGS) $(DEBUG_SPECIFIC_FLAGS) $(OBJECTS) $(LIBFT) -shared -o $@
 	@printf "\n$(GREEN)$(NAME) Created!$(DEFAULT)\n"
-
-$(NAME_DEBUG): $(DEBUG_OBJECTS)
-	make -C $(P_LIBFT)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(DEBUG_FLAGS) $(DEBUG_SPECIFIC_FLAGS) $(DEBUG_OBJECTS) $(LIBFT) -shared -o $@
-	@printf "\n$(GREEN)$(NAME_DEBUG) Created!$(DEFAULT)\n"
 
 $(TMP_DIR)%.o: $(SRCS_PATH)%.c $(HEADER)
 	@mkdir -p $(TMP_DIR)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(BONUS_SPECIFIC_FLAGS)  $(DEBUG_SPECIFIC_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
 	@printf "$(BLUE)[$(TITLE)] Compiling $<$(DEFAULT)\033[K\r"
 
-$(TMP_DIR)%_debug.o: $(SRCS_PATH)%.c $(HEADER)
-	@mkdir -p $(TMP_DIR)
-	$(CC) $(CFLAGS) $(COMPILE_FLAGS) $(DEBUG_FLAGS) $(DEBUG_SPECIFIC_FLAGS) -I$(HEADER_PATH) -MMD -c $< -o $@
-	@printf "$(BLUE)[$(TITLE)] Compiling $< in debug mode $(DEBUG_SPECIFIC_FLAGS) $(DEFAULT)\033[K\r"
-
 clean:
-	$(RM) $(OBJECTS) $(DEBUG_OBJECTS)
+	$(RM) $(OBJECTS)
 	$(RM) $(OBJECTS:.o=.d)
-	$(RM) $(DEBUG_OBJECTS:.o=.d)
 	make clean -C $(P_LIBFT)
 	@printf "$(BLUE)[$(TITLE)] Clean [OK]$(DEFAULT)\n"
 
 fclean: clean
-	$(RM) $(NAME) $(NAME_DEBUG) $(LIBNAME)
+	$(RM) $(NAME) $(LIBNAME)
 	make fclean -C $(P_LIBFT)
 	@printf "$(BLUE)[$(TITLE)] Fclean [OK]$(DEFAULT)\n"
 
@@ -96,10 +80,10 @@ re:
 	make all
 
 debug: DEBUG_SPECIFIC_FLAGS += $(DEBUG_FLAGS)
-debug: $(NAME_DEBUG)
-	@printf "\n$(YELLOW)Debug mode $(DEBUG_SPECIFIC_FLAGS) $(DEFAULT)\n"
+debug: $(NAME)
+	@printf "\n$(YELLOW)Debug mode $(DEFAULT)\n"
 
-bonus: BONUS_FLAGS += -DBONUS
+bonus: BONUS_SPECIFIC_FLAGS += $(BONUS_FLAGS)
 bonus: $(NAME)
 	@printf "\n$(YELLOW)Bonus mode $(DEFAULT)\n"
 
@@ -107,4 +91,3 @@ bonus: $(NAME)
 .SILENT:
 
 -include $(OBJECTS:.o:.d)
--include $(DEBUG_OBJECTS:.o:.d)
