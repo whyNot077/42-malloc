@@ -5,10 +5,10 @@ static Pointer create_vector(size_t size);
 static int resize_vector();
 static int vector_is_full(Pointer vector);
 static size_t get_vector_index(Pointer vector, Pointer bp);
-const int CAPACITY = 100;
 
 int init_vector()
 {
+    const int capacity = 10;
     if (!g_list)
     {
         return ERROR;
@@ -18,7 +18,7 @@ int init_vector()
     {
         return OK;
     }
-    Pointer new_vector = create_vector(CAPACITY);
+    Pointer new_vector = create_vector(capacity);
     if (!new_vector)
     {
         return ERROR;
@@ -35,10 +35,12 @@ static Pointer create_vector(size_t size)
     {
         return 0;
     }
-    VECTOR_CAPACITY(vector) = required_size;
+    VECTOR_CAPACITY(vector) = required_size / WSIZE;
     VECTOR_SIZE(vector) = 2;
     return vector;
 }
+
+
 
 static int resize_vector()
 {
@@ -47,17 +49,17 @@ static int resize_vector()
     {
         return ERROR;
     }
-    size_t current_size = VECTOR_CAPACITY(vector);
-    size_t new_size = get_aligned_size(current_size * 2 * WSIZE);
+    size_t current_capacity = VECTOR_CAPACITY(vector);
+    size_t new_size = get_aligned_size(current_capacity * 2 * WSIZE);
     Pointer new_vector = Mmap(new_size);
     if (!new_vector)
     {
         return ERROR;
     }
-    ft_memcpy((void *)new_vector, (void *)vector, current_size * WSIZE);
-    Munmap(vector, current_size * WSIZE);
+    ft_memcpy((void *)new_vector, (void *)vector, current_capacity * WSIZE);
+    Munmap(vector, current_capacity * WSIZE);
     SET_VECTOR_START_POINT((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE, new_vector);
-    VECTOR_CAPACITY(new_vector) = new_size;
+    VECTOR_CAPACITY(new_vector) = new_size / WSIZE;
     return OK;
 }
 
@@ -83,18 +85,18 @@ static size_t get_vector_index(Pointer vector, Pointer bp)
 
 int insert_to_vector(Pointer bp)
 {
-    add_log_detail("insert_to_vector");
+    add_log_detail("insert_to_vector\n");
     Pointer vector = GET_VECTOR_START_POINT();
     if (vector_is_full(vector) && (resize_vector() == ERROR))
     {
         return ERROR;
     }
-
-    size_t count = VECTOR_SIZE(vector);
+    vector = GET_VECTOR_START_POINT();
+    size_t size = VECTOR_SIZE(vector);
     size_t index = get_vector_index(vector, bp);
     ft_memmove(NEXT(&VECTOR_ELEMENT(vector, index)),
                &VECTOR_ELEMENT(vector, index),
-               (count - index) * WSIZE);
+               (size - index) * WSIZE);
     VECTOR_ELEMENT(vector, index) = bp;
     VECTOR_SIZE(vector)
     ++;

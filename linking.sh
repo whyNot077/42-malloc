@@ -11,6 +11,7 @@ gcc -L. -lft_malloc eval/test3.c -o tmp/test3
 gcc -L. -lft_malloc eval/test4.c -o tmp/test4
 gcc -L. -lft_malloc eval/test5.c -o tmp/test5
 
+./run_mac.sh
 
 # gcc -o test0_origin test0.c
 # gcc -o test1_origin test1.c
