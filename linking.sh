@@ -13,8 +13,8 @@ gcc -L. -lft_malloc eval/test3.c -o tmp/test3
 gcc -L. -lft_malloc eval/test4.c -o tmp/test4
 gcc -L. -lft_malloc eval/test5.c -o tmp/test5
 
-# gcc -o test0_origin test0.c
-# gcc -o test1_origin test1.c
-# gcc -o test2_origin test2.c
-# gcc -o test3_origin test3.c
-# gcc -o test5_origin test5.c
+# gcc -o eval/test0_origin eval/test0.c
+# gcc -o eval/test1_origin eval/test1.c
+# gcc -o eval/test2_origin eval/test2.c
+# gcc -o eval/test3_origin eval/test3.c
+# gcc -o eval/test5_origin eval/test5.c
