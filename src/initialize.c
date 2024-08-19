@@ -23,8 +23,8 @@ static void get_threshold(int *small_threshold, int *large_threshold)
 {
     int page_size = getpagesize();
 
-    size_t tiny_pool_size = 4 * page_size;
-    size_t small_pool_size = 128 * page_size;
+    size_t tiny_pool_size = page_size;
+    size_t small_pool_size = 4 * page_size;
 
     *small_threshold = (tiny_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
     *large_threshold = (small_pool_size - PROLOGUE_SIZE - EPILOGUE_SIZE) / 128;
