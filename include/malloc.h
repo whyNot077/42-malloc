@@ -54,6 +54,7 @@ int raise_error(char *message);
 
 void free(void *bp);
 void *realloc(void *ptr, size_t size);
+void release_all();
 
 /* initialize.c */
 int init_malloc();
@@ -138,6 +139,7 @@ void add_log_linked_blocks(Pointer root);
 
 #define VECTOR_CAPACITY(ptr) (*((size_t *)(ptr)))
 #define VECTOR_SIZE(ptr) (*((size_t *)((Pointer)(ptr) + WSIZE)))
+#define VECTOR_DATA_NUM(ptr) VECTOR_SIZE(ptr) - 2
 #define VECTOR_ELEMENT(ptr, index) (*((Pointer *)((Pointer)(ptr) + ((index) + 2) * WSIZE)))
 #define NEXT(ptr) ((Pointer *)((Pointer)(ptr) + WSIZE))
 #define PREV(ptr) ((Pointer *)((Pointer)(ptr) - WSIZE))

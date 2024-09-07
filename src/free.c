@@ -2,7 +2,7 @@
 static void free_segregated_list();
 static void free_bp(Pointer bp);
 static int free_vector();
-static int not_exist_allocated_block();
+static void free_empty_heap();
 
 void free(void *bp)
 {
@@ -11,15 +11,18 @@ void free(void *bp)
     lock();
     open_log_file();
     free_bp((Pointer)bp);
-    if (not_exist_allocated_block())
-    {
-        free_vector();
-        free_segregated_list();
-        close_log_file();
-        destroy_lock();
-    }
+    free_empty_heap();
     unlock();
     close_log_file();
+}
+
+void release_all()
+{
+    free_vector();
+    free_segregated_list();
+    close_log_file();
+    destroy_lock();
+    printf("All memory is released.\n");
 }
 
 int is_heap_empty(Base prologue_bp)
@@ -29,13 +32,13 @@ int is_heap_empty(Base prologue_bp)
     return IS_ALLOC(HEAD(epilogue_block)) && GET_SIZE(HEAD(epilogue_block)) == 0;
 }
 
-static int not_exist_allocated_block()
+static void free_empty_heap()
 {
     Pointer vector = GET_VECTOR_START_POINT();
-    for (size_t i = 0; i < VECTOR_SIZE(vector) - 2; i++)
+    for (size_t i = VECTOR_DATA_NUM(vector); i > 0; i--)
     {
-        Base prologue_bp = VECTOR_ELEMENT(vector, i);
-        if (is_heap_empty(prologue_bp))
+        Base prologue_bp = VECTOR_ELEMENT(vector, i - 1);
+        if (VECTOR_DATA_NUM(vector) > 1 && is_heap_empty(prologue_bp))
         {
             remove_from_list(NEXT_BLK(prologue_bp));
             delete_from_vector(prologue_bp);
@@ -44,7 +47,6 @@ static int not_exist_allocated_block()
             add_log(DELETE_HEAP, prologue_bp, 0);
         }
     }
-    return VECTOR_SIZE(vector) - 2 == 0;
 }
 
 static void free_bp(Pointer bp)

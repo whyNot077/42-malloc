@@ -60,6 +60,8 @@ static int initialize_start_point(void)
     PUT((Pointer)(g_list + 3 * BLOCK_SIZE + WSIZE), large_threshold);
     PUT_PTR((Pointer)(g_list + 3 * BLOCK_SIZE + 2 * WSIZE), 0);
     PUT((Pointer)(g_list + 3 * BLOCK_SIZE + 3 * WSIZE), EMPTY);
+
+    atexit(release_all);
     return OK;
 }
 
