@@ -9,3 +9,4 @@ libft_malloc_x86_64_Darwin.so
 tmp
 trace
 malloc.h.gch
+.vscode
