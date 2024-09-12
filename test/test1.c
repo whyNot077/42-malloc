@@ -10,6 +10,16 @@ void *test_realloc(void *ptr, size_t size, int is_show_mem);
 void show_deeper(void *ptr, int size);
 void show_mem(int extension);
 
+static void get_threshold(int *small_threshold, int *large_threshold)
+{
+    int page_size = getpagesize();
+
+    size_t tiny_pool_size = page_size * 4 - PROLOGUE_SIZE - EPILOGUE_SIZE;
+    size_t large_pool_size = page_size * 12 - PROLOGUE_SIZE - EPILOGUE_SIZE;
+
+    *small_threshold = tiny_pool_size / 128 + 1;
+    *large_threshold = large_pool_size / 128 + 1;
+}
 int main(void)
 {
 #ifdef DEBUG
@@ -19,22 +29,25 @@ int main(void)
     int size = 100;  // 14-> 15 -> 16
     void* tiny[size];
     void* small[size];
-    int small_threshold = 511 - DSIZE - WSIZE;
-    int large_threshold = 4095 - DSIZE - WSIZE;
+    int small_threshold, large_threshold;
+    get_threshold(&small_threshold, &large_threshold);
+    printf("%d, %d\n", small_threshold, large_threshold);
+
     for (int i = 0; i < size; i++)
     {
-        tiny[i] = test_malloc(small_threshold - 1, 0); // tiny
-        small[i] = test_malloc(large_threshold - 1, 0); // small
+        tiny[i] = test_malloc(small_threshold - WSIZE - DSIZE, 0); // tiny
+        small[i] = test_malloc(large_threshold - WSIZE - DSIZE, 0); // small
     }
     printf("test(tiny + small many) success\n");
     show_mem(0);
+
     // free even
     for (int i = 0; i < size; i += 2)
     {
         test_free(tiny[i], 0);
         test_free(small[i], 0);
     }
-    show_mem(0);
+    // show_mem(0);
     for (int i = 1; i < size; i += 2)
     {
         test_free(tiny[i], 0);

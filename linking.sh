@@ -17,14 +17,9 @@ echo "build eval successful."
 gcc eval/test0.c -o tmp/test0_origin
 gcc eval/test1.c -o tmp/test1_origin
 gcc eval/test2.c -o tmp/test2_origin
+
 # gcc -L. -lft_malloc test/test.c -o tmp/my_test0
 # gcc -L. -lft_malloc test/test1.c -o tmp/my_test1
 # gcc -L. -lft_malloc test/test2.c -o tmp/my_test2
 # gcc -L. -lft_malloc test/test3.c -o tmp/my_test3
 # echo "build test successful."
-
-# gcc -o tmp/test0_origin eval/test0.c
-# gcc -o tmp/test1_origin eval/test1.c
-# gcc -o tmp/test2_origin eval/test2.c
-# gcc -o tmp/test3_origin eval/test3.c
-# gcc -o tmp/test5_origin eval/test5.c
