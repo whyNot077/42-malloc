@@ -57,7 +57,7 @@ void *realloc(void *ptr, size_t size);
 void release_all();
 
 /* initialize.c */
-int init_malloc();
+int init_malloc(size_t aligned_size);
 Pointer init_heap(t_pool type);
 
 /* heap.c */

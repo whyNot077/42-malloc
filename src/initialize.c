@@ -5,7 +5,7 @@ Pointer g_list = 0;
 static void get_threshold(int *small_threshold, int *large_threshold);
 static int initialize_start_point(void);
 
-int init_malloc()
+int init_malloc(size_t aligned_size)
 {
     add_log_detail("init_malloc");
     if (g_list)
@@ -16,7 +16,8 @@ int init_malloc()
     {
         return ERROR;
     }
-    return init_vector();
+    init_vector();
+    return extend_heap(aligned_size);
 }
 
 static void get_threshold(int *small_threshold, int *large_threshold)

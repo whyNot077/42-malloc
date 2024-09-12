@@ -139,11 +139,11 @@ Pointer make_bigger(Pointer ptr, size_t current_size, size_t new_size)
 
 static Pointer request(size_t size)
 {
-    if (init_malloc() == ERROR)
+    size_t aligned_size = get_aligned_size(size);
+    if (init_malloc(aligned_size) == ERROR)
     {
         return 0;
     }
-    size_t aligned_size = get_aligned_size(size);
     Base bp = find_location(aligned_size);
     if (bp)
     {

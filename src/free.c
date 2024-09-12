@@ -22,7 +22,6 @@ void release_all()
     free_segregated_list();
     close_log_file();
     destroy_lock();
-    printf("All memory is released.\n");
 }
 
 int is_heap_empty(Base prologue_bp)
