@@ -4,7 +4,7 @@ static size_t get_page_size(size_t size);
 
 Pointer extend_heap(size_t words)
 {
-    words = get_page_size(words);
+    words = get_page_size(words + PROLOGUE_SIZE + EPILOGUE_SIZE);
     add_log_detail("extend_heap");
     Pointer prologue_bp = new_heap(words);
     if (!prologue_bp)
@@ -16,15 +16,15 @@ Pointer extend_heap(size_t words)
     return coalesce(NEXT_BLK(prologue_bp), get_pool_type(words));
 }
 
-Base new_heap(size_t words)
+Base new_heap(size_t size)
 {
-    size_t size = get_aligned_size(words + PROLOGUE_SIZE + EPILOGUE_SIZE);
     Pointer res = Mmap(size);
     if (!res)
     {
         return res;
     }
     Pointer bp = (Pointer)res + WSIZE;
+
     // prologue block
     PUT(HEAD(bp), PACK(PROLOGUE_SIZE, true));
     PUT(FOOT(bp), PACK(PROLOGUE_SIZE, true));

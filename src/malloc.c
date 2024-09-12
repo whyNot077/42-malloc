@@ -9,12 +9,18 @@ void *malloc(size_t size)
     lock();
     open_log_file();
     add_log_detail("malloc");
+    size_t aligned_size = get_aligned_size(size);
+    if (init_malloc(aligned_size) == ERROR)
+    {
+        unlock();
+        return 0;
+    }
     if (size == 0 || size > INT_MAX)
     {
         unlock();
         return NULL;
     }
-    Pointer res = request(size);
+    Pointer res = request(aligned_size);
     if (res == 0)
     {
         unlock();
@@ -137,13 +143,8 @@ Pointer make_bigger(Pointer ptr, size_t current_size, size_t new_size)
     }
 }
 
-static Pointer request(size_t size)
+static Pointer request(size_t aligned_size)
 {
-    size_t aligned_size = get_aligned_size(size);
-    if (init_malloc(aligned_size) == ERROR)
-    {
-        return 0;
-    }
     Base bp = find_location(aligned_size);
     if (bp)
     {

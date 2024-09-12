@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <stdio.h>
 void print(char *s)
 {
     write(1, s, strlen(s));
@@ -25,6 +25,10 @@ int     main()
         }
         if ((((unsigned long) (addr)) % alignment) != 0)
         {
+            printf("%lu\n", (unsigned long) (addr));
+            printf("%d\n", alignment);
+            printf("%lu\n", ((unsigned long) (addr)) % alignment);
+            printf("i = %d\n", i);
             print("malloc returned a non aligned boundary\n");
             exit(1);
         }

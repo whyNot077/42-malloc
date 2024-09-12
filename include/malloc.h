@@ -62,7 +62,7 @@ Pointer init_heap(t_pool type);
 
 /* heap.c */
 t_pool get_pool_type(size_t size);
-Base new_heap(size_t words);
+Base new_heap(size_t size);
 Pointer extend_heap(size_t words);
 int is_heap_empty(Base prologue_bp);
 
@@ -100,8 +100,8 @@ void add_log(t_event t_event, Pointer ptr, size_t size);
 void add_log_detail(const char *msg);
 void add_log_linked_blocks(Pointer root);
 
-#define ALIGNMENT 8
-#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~0x7)
+#define ALIGNMENT 16
+#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
 #define EMPTY -1
 #define LOG_PATH "./trace/malloc.log"
 
