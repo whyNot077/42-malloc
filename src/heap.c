@@ -1,6 +1,7 @@
 #include "malloc.h"
 
 static size_t get_page_size(size_t size);
+static Base new_heap(size_t size);
 
 Pointer extend_heap(size_t words)
 {
@@ -16,7 +17,7 @@ Pointer extend_heap(size_t words)
     return coalesce(NEXT_BLK(prologue_bp), get_pool_type(words));
 }
 
-Base new_heap(size_t size)
+static Base new_heap(size_t size)
 {
     Pointer res = Mmap(size);
     if (!res)
@@ -27,7 +28,7 @@ Base new_heap(size_t size)
 
     // prologue block
     PUT(HEAD(bp), PACK(PROLOGUE_SIZE, true));
-    PUT(FOOT(bp), PACK(PROLOGUE_SIZE, true));
+    // PUT(FOOT(bp), PACK(PROLOGUE_SIZE, true));
 
     // allocated block
     Pointer next_bp = NEXT_BLK(bp);
@@ -45,6 +46,7 @@ static size_t get_page_size(size_t size)
 {
     size_t pagesize = getpagesize();
     size_t pages = (size + pagesize - 1) / pagesize;
+    // printf("pagesize: %zu, pages: %zu\n", pagesize, pages);
     size_t new_size = pages * pagesize;
     return new_size;
 }

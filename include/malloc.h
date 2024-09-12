@@ -62,7 +62,6 @@ Pointer init_heap(t_pool type);
 
 /* heap.c */
 t_pool get_pool_type(size_t size);
-Base new_heap(size_t size);
 Pointer extend_heap(size_t words);
 int is_heap_empty(Base prologue_bp);
 
@@ -108,7 +107,7 @@ void add_log_linked_blocks(Pointer root);
 #define WSIZE sizeof(Pointer) /* Word size */
 #define DSIZE (2 * WSIZE)     /* Double word size */
 #define BLOCK_SIZE (2 * DSIZE)
-#define PROLOGUE_SIZE (DSIZE)
+#define PROLOGUE_SIZE (WSIZE)
 #define EPILOGUE_SIZE (WSIZE)
 
 #define PACK(size, alloc) ((size) | (alloc))
