@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdio.h>
 
 void    print(char *s)
 {
@@ -14,7 +13,6 @@ int     main(void)
     char  *addr;
 
     i = 0;
-    printf("malloc(1024) x 1024\n");
     while (i < 1024)
     {
         addr = (char*)malloc(1024);
