@@ -18,8 +18,8 @@ gcc eval/test0.c -o tmp/test0_origin
 gcc eval/test1.c -o tmp/test1_origin
 gcc eval/test2.c -o tmp/test2_origin
 
-# gcc -L. -lft_malloc test/test.c -o tmp/my_test0
-# gcc -L. -lft_malloc test/test1.c -o tmp/my_test1
-# gcc -L. -lft_malloc test/test2.c -o tmp/my_test2
-# gcc -L. -lft_malloc test/test3.c -o tmp/my_test3
-# echo "build test successful."
+gcc -L. -lft_malloc test/test.c -o tmp/my_test0
+gcc -L. -lft_malloc test/test1.c -o tmp/my_test1
+gcc -L. -lft_malloc test/test2.c -o tmp/my_test2
+gcc -L. -lft_malloc test/test3.c -o tmp/my_test3
+echo "build test successful."
