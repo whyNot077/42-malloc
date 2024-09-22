@@ -12,8 +12,8 @@ void free(void *bp)
     open_log_file();
     free_bp((Pointer)bp);
     free_empty_heap();
-    unlock();
     close_log_file();
+    unlock();
 }
 
 void release_all()
