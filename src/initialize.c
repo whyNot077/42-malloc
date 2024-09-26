@@ -5,7 +5,7 @@ Pointer g_list = 0;
 static void get_threshold(int *small_threshold, int *large_threshold);
 static int initialize_start_point(void);
 
-int init_malloc(size_t aligned_size)
+int init_malloc()
 {
     add_log_detail("init_malloc");
     if (g_list)
@@ -17,7 +17,7 @@ int init_malloc(size_t aligned_size)
         return ERROR;
     }
     init_vector();
-    return extend_heap(aligned_size);
+    return extend_heap(getpagesize() * 20);
 }
 
 static void get_threshold(int *small_threshold, int *large_threshold)
@@ -25,7 +25,7 @@ static void get_threshold(int *small_threshold, int *large_threshold)
     int page_size = getpagesize();
 
     size_t tiny_pool_size = page_size * 4 - PROLOGUE_SIZE - EPILOGUE_SIZE;
-    size_t large_pool_size = page_size * 12 - PROLOGUE_SIZE - EPILOGUE_SIZE;
+    size_t large_pool_size = page_size * 16 - PROLOGUE_SIZE - EPILOGUE_SIZE;
 
     *small_threshold = tiny_pool_size / 128 + 1;
     *large_threshold = large_pool_size / 128 + 1;
@@ -68,11 +68,11 @@ static int initialize_start_point(void)
 
 t_pool get_pool_type(size_t size)
 {
-    if (size <= GET_TINY_THRESHOLD())
+    if (size <= GET_SMALL_THRESHOLD())
     {
         return TINY;
     }
-    else if (size <= GET_SMALL_THRESHOLD())
+    else if (size <= GET_LARGE_THRESHOLD())
     {
         return SMALL;
     }

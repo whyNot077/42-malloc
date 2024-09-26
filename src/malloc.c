@@ -9,8 +9,7 @@ void *malloc(size_t size)
     lock();
     open_log_file();
     add_log_detail("malloc");
-    size_t aligned_size = get_aligned_size(size);
-    if (init_malloc(aligned_size) == ERROR)
+    if (init_malloc() == ERROR)
     {
         unlock();
         return 0;
@@ -20,6 +19,7 @@ void *malloc(size_t size)
         unlock();
         return NULL;
     }
+    size_t aligned_size = get_aligned_size(size);
     Pointer res = request(aligned_size);
     if (res == 0)
     {

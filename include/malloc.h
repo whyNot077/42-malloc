@@ -57,7 +57,7 @@ void *realloc(void *ptr, size_t size);
 void release_all();
 
 /* initialize.c */
-int init_malloc(size_t aligned_size);
+int init_malloc();
 Pointer init_heap(t_pool type);
 
 /* heap.c */
@@ -117,8 +117,8 @@ void add_log_linked_blocks(Pointer root);
 #define GET_PTR(p) ((Pointer)(GET(p)))
 #define PUT_PTR(p, val) (PUT(p, (Pointer)(val)))
 
-#define GET_TINY_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE))
-#define GET_SMALL_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE + WSIZE))
+#define GET_SMALL_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE))
+#define GET_LARGE_THRESHOLD() GET(((Pointer)(g_list) + 3 * BLOCK_SIZE + WSIZE))
 #define GET_VECTOR_START_POINT() GET_PTR((Pointer)(g_list) + 3 * BLOCK_SIZE + 2 * WSIZE)
 #define SET_VECTOR_START_POINT(p, val) PUT_PTR(p, val)
 #define GET_LOG_FD() GET((Pointer)(g_list) + 3 * BLOCK_SIZE + 3 * WSIZE)
